@@ -1,0 +1,16 @@
+<mat-grid-list cols="4" rowHeight="2:1">
+    <mat-grid-tile *ngFor="let word of words">
+        <div>
+            <button mat-icon-button (click)="speakWord(word.word)">
+                <mat-icon>volume_up</mat-icon>
+            </button>
+            <h1>{{word.word}}</h1>
+            <div class="translations">
+                <ul>
+                    <li *ngFor="let t of word.translations">{{t}}</li>
+                </ul>
+            </div>
+        </div>
+    </mat-grid-tile>
+</mat-grid-list>
+
