@@ -1,1 +1,23 @@
-<p>word works!</p>
+<mat-progress-bar mode="determinate" value="{{ progress }}"></mat-progress-bar>
+
+<div class="content">
+    <form *ngIf="!loading else loader">
+        <div class="tags mt1 mb1" *ngIf="currentWord">
+            <span *ngFor="let tag of currentWord.translations">{{tag}}</span>
+        </div>
+        <input type="text"
+            name="currentValue"
+            class="textfield textfield-xl" 
+            [ngClass]="{ incorrect: isIncorrect, final: isFinal }"
+            [(ngModel)]="currentValue"
+            (keyup)="onEnter($event)"
+            autocomplete="off"
+            autofocus>
+        <div class="correct" *ngIf="correctWord">{{correctWord}}</div>
+    </form>
+    
+    <ng-template #loader>
+        <mat-spinner></mat-spinner>
+    </ng-template>
+</div>
+

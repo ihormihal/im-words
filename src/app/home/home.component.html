@@ -1,1 +1,7 @@
-<p>home works!</p>
+<div class="categories">
+    <div class="category" *ngFor="let c of categories" [routerLink]="['/category', c.id]">
+        <div class="title">{{c.title}}</div>
+        <div class="length">{{c.length}} words</div>
+    </div>
+</div>
+

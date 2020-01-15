@@ -1,16 +1,23 @@
-<mat-grid-list cols="4" rowHeight="2:1">
+<mat-grid-list cols="5" rowHeight="2:1">
     <mat-grid-tile *ngFor="let word of words">
-        <div>
-            <button mat-icon-button (click)="speakWord(word.word)">
-                <mat-icon>volume_up</mat-icon>
-            </button>
-            <h1>{{word.word}}</h1>
-            <div class="translations">
-                <ul>
-                    <li *ngFor="let t of word.translations">{{t}}</li>
-                </ul>
+        <div class="box">
+            <div class="header">
+                <button mat-icon-button (click)="speakWord(word.word)">
+                    <mat-icon>volume_up</mat-icon>
+                </button>
+                <div class="word">{{word.word}}</div>
+            </div>
+            
+            <div class="tags translations">
+                <span *ngFor="let t of word.translations">{{t}}</span>
             </div>
         </div>
     </mat-grid-tile>
+
+    <div class="fab-area">
+        <button mat-fab (click)="startLearn()">
+            <mat-icon>play_arrow</mat-icon>
+        </button>
+    </div>
 </mat-grid-list>
 

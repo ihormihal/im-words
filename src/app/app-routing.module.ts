@@ -8,7 +8,7 @@ import { WordComponent } from './word/word.component'
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'category/:category_id', component: CategoryComponent },
-  { path: 'category/:category_id/word/:id', component: WordComponent }
+  { path: 'category/:category_id/learn', component: WordComponent }
 ]
 
 @NgModule({

@@ -7,4 +7,8 @@ export class SpeachService {
         let utterThis = new SpeechSynthesisUtterance(word)
         window.speechSynthesis.speak(utterThis)
     }
+
+    cancel(): void {
+        window.speechSynthesis.cancel()
+    }
 }

@@ -1,0 +1,19 @@
+.categories {
+    .category {
+        padding: 8px 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        .title {
+            font-size: 24px;
+            display: inline-block;
+        }
+        .length {
+            font-size: 16px;
+            display: inline-block;
+            margin-left: 16px;
+        }
+        &:hover {
+            background-color: rgb(153, 209, 255) ;
+        }
+    }
+}

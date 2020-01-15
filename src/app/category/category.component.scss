@@ -1,3 +1,29 @@
-mat-grid-tile {
-    background: lightblue;
+.mat-grid-list {
+    .mat-grid-tile {
+        background-color: #f0f0f0;
+        &:nth-child(odd){
+            background-color: #f8f8f8;
+        }
+    }
+}
+
+.header {
+    display: flex;
+    line-height: 40px;
+    .word {
+        margin-left: 8px;
+        font-size: 18px;
+    }
+    margin-bottom: 16px;
+}
+
+.tags {
+    span { font-size: 12px; }
+}
+
+.fab-area {
+    position: fixed;
+    z-index: 9000;
+    bottom: 50px;
+    right: 50px;
 }
