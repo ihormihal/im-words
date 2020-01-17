@@ -5,6 +5,7 @@
         <div class="tags mt1 mb1" *ngIf="currentWord">
             <span *ngFor="let tag of currentWord.translations">{{tag}}</span>
         </div>
+        <div class="hint" *ngIf="hint">{{hint}}</div>
         <input type="text"
             name="currentValue"
             class="textfield textfield-xl" 

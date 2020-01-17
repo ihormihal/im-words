@@ -11,6 +11,13 @@
 }
 
 
+@media screen and(max-width: 480px) {
+    .content {
+        width: 90%;
+    }
+}
+
+
 .textfield {
     width: 100%;
     border-width: 4px;
@@ -31,4 +38,10 @@
     font-size: 36px;
     margin-top: 16px;
     text-align: center;
+}
+
+.hint {
+    padding: 16px 0;
+    color: grey;
+    font-size: 18px;
 }

@@ -17,3 +17,11 @@
         }
     }
 }
+
+@media screen and(max-width: 480px) {
+    .categories .category {
+        .title {
+            font-size: 18px;
+        }
+    }
+}

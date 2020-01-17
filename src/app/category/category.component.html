@@ -1,5 +1,5 @@
-<mat-grid-list cols="5" rowHeight="2:1">
-    <mat-grid-tile *ngFor="let word of words">
+<div class="grid" *ngIf="!loading else loader">
+    <div class="grid-item" *ngFor="let word of words">
         <div class="box">
             <div class="header">
                 <button mat-icon-button (click)="speakWord(word.word)">
@@ -12,12 +12,19 @@
                 <span *ngFor="let t of word.translations">{{t}}</span>
             </div>
         </div>
-    </mat-grid-tile>
+    </div>
 
     <div class="fab-area">
         <button mat-fab (click)="startLearn()">
             <mat-icon>play_arrow</mat-icon>
         </button>
     </div>
-</mat-grid-list>
+</div>
+
+
+<ng-template #loader>
+    <div class="wrapper">
+        <mat-spinner></mat-spinner>
+    </div>
+</ng-template>
 

@@ -1,7 +1,30 @@
-.mat-grid-list {
-    .mat-grid-tile {
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 200px auto 0;
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    .grid-item {
         background-color: #f0f0f0;
+    }
+}
+
+@media screen and(min-width: 481px) {
+    .grid .grid-item {
+        width: 20%;
         &:nth-child(odd){
+            background-color: #f8f8f8;
+        }
+    }
+}
+@media screen and(max-width: 480px) {
+    .grid .grid-item {
+        width: 50%;
+        &:nth-child(4n+1), &:nth-child(4n+4){
             background-color: #f8f8f8;
         }
     }

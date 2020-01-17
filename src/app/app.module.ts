@@ -10,7 +10,6 @@ import { AppComponent } from './app.component'
 import { WordComponent } from './word/word.component'
 import { CategoryComponent } from './category/category.component'
 import { HomeComponent } from './home/home.component'
-import { MatGridListModule } from '@angular/material/grid-list'
 import { MatIconModule } from '@angular/material/icon'
 import { MatButtonModule } from '@angular/material/button'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
@@ -29,7 +28,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
     BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
-    MatGridListModule,
     MatIconModule,
     MatButtonModule,
     MatProgressBarModule,

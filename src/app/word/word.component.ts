@@ -29,6 +29,7 @@ export class WordComponent implements OnInit {
 	currentWord: Word
 	currentValue: string = ''
 	correctWord: string = ''
+	hint: string = ''
 
 	isIncorrect: boolean = true
 	isFinal: boolean = false
@@ -52,7 +53,11 @@ export class WordComponent implements OnInit {
 	}
 
 	shuffle(): void {
-		this.words = this.words.sort(() => Math.random() - 0.5)
+		if(this.words.length < 2) return
+		let nextWord = this.words[0].word
+		do {
+			this.words = this.words.sort(() => Math.random() - 0.5)
+		} while (this.words[0].word === nextWord)
 	}
 
 	speakWord(word: string) {
@@ -72,6 +77,7 @@ export class WordComponent implements OnInit {
 		this.isIncorrect = false
 		this.correctWord = ''
 		this.currentValue = ''
+		this.hint = ''
 
 		if(remove) this.words.splice(0, 1)
 		if(this.words.length == 0){
@@ -82,6 +88,7 @@ export class WordComponent implements OnInit {
 
 
 		this.currentWord = this.words[0]
+		if(this.currentWord.word.indexOf('to ') === 0) this.hint = 'to ***'
 		this.progress = 100 * (1 - this.words.length / this.length)
 
 	}
