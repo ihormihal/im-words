@@ -17,6 +17,7 @@ export class WordComponent implements OnInit {
 		private router: Router
 	) { }
 
+	reverse = false
 	category_id: number = null
 	loading: boolean = false
 
@@ -60,15 +61,33 @@ export class WordComponent implements OnInit {
 		} while (this.words[0].word === nextWord)
 	}
 
-	speakWord(word: string) {
-		this.speachService.speak(word)
+	speakWord() {
+		this.speachService.cancel()
+		this.speachService.speak(this.currentWord.word)
 	}
 
-	check(full: boolean = false) {
-		if (full) {
-			return this.currentValue.toLowerCase() === this.currentWord.word.toLowerCase()
-		} else {
-			return this.currentWord.word.toLowerCase().indexOf(this.currentValue.toLowerCase()) !== 0
+	checkIncorrect() {
+		const val = this.currentValue.toLowerCase()
+		if(this.reverse){
+			for(let tr of this.currentWord.translations){
+				if(tr.toLowerCase().indexOf(val) === 0) return false
+			}
+			return true
+		}else{
+			return this.currentWord.word.toLowerCase().indexOf(val) !== 0
+		}
+	}
+
+		
+	checkFinal() {
+		const val = this.currentValue.toLowerCase()
+		if(this.reverse){
+			for(let tr of this.currentWord.translations){
+				if(val === tr.toLowerCase()) return true;
+			}
+			return false
+		}else{
+			return val === this.currentWord.word.toLowerCase()
 		}
 	}
 
@@ -83,6 +102,7 @@ export class WordComponent implements OnInit {
 		if(this.words.length == 0){
 			this.speachService.cancel()
 			this.router.navigate([`/category`, this.category_id])
+			return
 		}
 		this.shuffle()
 
@@ -94,6 +114,11 @@ export class WordComponent implements OnInit {
 	}
 
 	onEnter(event: KeyboardEvent) {
+		if(event.code === 'ArrowRight'){
+			this.speakWord()
+			this.next(true)
+			return
+		}
 		if (event.code === 'Enter') {
 
 			//if hint
@@ -104,18 +129,18 @@ export class WordComponent implements OnInit {
 
 			if (this.isFinal) {
 				//if correct -> just remove and carry on
-				this.speachService.speak(this.currentWord.word)
+				this.speakWord()
 				this.next(true)
 			} else {
 				//if incorrect -> show hint and to nothing
-				this.speachService.speak(this.currentWord.word)
-				this.correctWord = this.currentWord.word
+				this.speakWord()
+				this.correctWord = this.reverse ? this.currentWord.translations.join(', ') : this.currentWord.word
 			}
 
 		} else {
 			this.currentValue = (<HTMLInputElement>event.target).value
-			this.isIncorrect = this.check()
-			this.isFinal = this.check(true)
+			this.isIncorrect = this.checkIncorrect()
+			this.isFinal = this.checkFinal()
 		}
 
 	}

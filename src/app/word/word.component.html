@@ -1,9 +1,18 @@
 <mat-progress-bar mode="determinate" value="{{ progress }}"></mat-progress-bar>
 
+<div class="box">
+    <mat-slide-toggle [(ngModel)]="reverse">Reverse</mat-slide-toggle>
+</div>
+
 <div class="content">
     <form *ngIf="!loading else loader">
         <div class="tags mt1 mb1" *ngIf="currentWord">
-            <span *ngFor="let tag of currentWord.translations">{{tag}}</span>
+            <ng-container *ngIf="reverse">
+                <span>{{currentWord.word}}</span>
+            </ng-container>
+            <ng-container *ngIf="!reverse">
+                <span *ngFor="let tag of currentWord.translations">{{tag}}</span>
+            </ng-container>
         </div>
         <div class="hint" *ngIf="hint">{{hint}}</div>
         <input type="text"
