@@ -1,33 +1,50 @@
 <mat-progress-bar mode="determinate" value="{{ progress }}"></mat-progress-bar>
 
-<div class="box">
-    <mat-slide-toggle [(ngModel)]="reverse">Reverse</mat-slide-toggle>
-</div>
+<!--<div class="box">-->
+<!--  <mat-slide-toggle [(ngModel)]="reverse">Reverse</mat-slide-toggle>-->
+<!--&lt;!&ndash;  <app-microphone&ndash;&gt;-->
+<!--&lt;!&ndash;    [target]="currentWord?.word"&ndash;&gt;-->
+<!--&lt;!&ndash;    (success)="success()"&ndash;&gt;-->
+<!--&lt;!&ndash;    (fail)="fail()"&ndash;&gt;-->
+<!--&lt;!&ndash;    (enter)="enter($event)">&ndash;&gt;-->
+<!--&lt;!&ndash;  </app-microphone>&ndash;&gt;-->
+
+<!--  <div class="mic-button" [class.active]="recActive" (click)="toggleRec()"></div>-->
+<!--  {{recActive}}-->
+<!--</div>-->
 
 <div class="content">
-    <form *ngIf="!loading else loader">
-        <div class="tags mt1 mb1" *ngIf="currentWord">
-            <ng-container *ngIf="reverse">
-                <span>{{currentWord.word}}</span>
-            </ng-container>
-            <ng-container *ngIf="!reverse">
-                <span *ngFor="let tag of currentWord.translations">{{tag}}</span>
-            </ng-container>
-        </div>
-        <div class="hint" *ngIf="hint">{{hint}}</div>
-        <input type="text"
-            name="currentValue"
-            class="textfield textfield-xl" 
-            [ngClass]="{ incorrect: isIncorrect, final: isFinal }"
-            [(ngModel)]="currentValue"
-            (keyup)="onEnter($event)"
-            autocomplete="off"
-            autofocus>
-        <div class="correct" *ngIf="correctWord">{{correctWord}}</div>
+  <ng-container *ngIf="!loading else loader">
+
+    <form>
+
+      <section class="options">
+        <div class="mic-button" [class.active]="isRecording" (click)="toggleRec()"><i class="icon"></i></div>
+      </section>
+
+      <div class="tags mt1 mb1" *ngIf="currentWord">
+        <ng-container *ngIf="reverse">
+          <span>{{currentWord.word}}</span>
+        </ng-container>
+        <ng-container *ngIf="!reverse">
+          <span *ngFor="let tag of currentWord.translations">{{tag}}</span>
+        </ng-container>
+      </div>
+      <div class="hint" *ngIf="hint">{{hint}}</div>
+      <input #input type="text"
+             name="currentValue"
+             class="textfield textfield-xl"
+             [class.incorrect]="isError"
+             [class.final]="isFinal"
+             [(ngModel)]="currentValue"
+             autocomplete="off"
+             autofocus>
+      <div class="correct" *ngIf="show">{{currentWord.word}}</div>
     </form>
-    
-    <ng-template #loader>
-        <mat-spinner></mat-spinner>
-    </ng-template>
+  </ng-container>
+
+  <ng-template #loader>
+    <mat-spinner></mat-spinner>
+  </ng-template>
 </div>
 

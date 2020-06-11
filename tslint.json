@@ -1,16 +1,17 @@
 {
   "extends": "tslint:recommended",
   "rules": {
+    "skipBlankLines": true,
     "array-type": false,
     "arrow-parens": false,
     "deprecation": {
       "severity": "warning"
     },
     "component-class-suffix": true,
-    "contextual-lifecycle": true,
-    "directive-class-suffix": true,
+    "contextual-lifecycle": false,
+    "directive-class-suffix": false,
     "directive-selector": [
-      true,
+      false,
       "attribute",
       "app",
       "camelCase"
