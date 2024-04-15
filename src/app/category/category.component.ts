@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router'
+import { DOCUMENT } from '@angular/common'
 import { Word, CategoriesService} from './../services/categories.service'
 import { SpeachService } from './../services/speach.service'
+
 
 @Component({
   selector: 'app-category',
@@ -15,13 +17,15 @@ export class CategoryComponent implements OnInit {
     private wordsService: CategoriesService,
     private speachService: SpeachService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    @Inject(DOCUMENT) private document: Document
   ) { }
-  
+
+  lang: string = 'en_US'
   category_id:number = null
   loading:boolean = false
   words: Word[] = []
-  
+
 
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
@@ -34,6 +38,8 @@ export class CategoryComponent implements OnInit {
     this.loading = true
     this.wordsService.fetchCategory(category_id)
       .subscribe(category => {
+        this.document.documentElement.lang = category.lang || 'en-US';
+        this.lang = category.lang || 'en_US';
         this.words = category.words
         this.loading = false
       })

@@ -1,5 +1,6 @@
-import {Injectable} from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import {Observable, Subject} from 'rxjs';
+import { DOCUMENT } from '@angular/common';
 
 export interface IWindow extends Window {
   webkitSpeechRecognition: any;
@@ -12,7 +13,7 @@ export class SpeachService {
   public recActive = new Subject<boolean>();
   private recognition: any;
 
-  constructor() {
+  constructor(@Inject(DOCUMENT) private document: Document) {
     this.initSpeechRecognition();
   }
 
@@ -50,7 +51,12 @@ export class SpeachService {
   }
 
   public speak(word: string): void {
+    const lang = this.document.documentElement.lang;
+    const voices = window.speechSynthesis.getVoices().find(v => v.lang === lang && v.name.includes('Google'));
     const utterThis = new SpeechSynthesisUtterance(word);
+    utterThis.voice = voices; // 3, 4!, 9!!
+    utterThis.rate = 1;
+    utterThis.lang = lang;
     window.speechSynthesis.speak(utterThis);
   }
 

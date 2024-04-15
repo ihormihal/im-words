@@ -1,9 +1,24 @@
-import {Component, OnInit, ChangeDetectorRef, ElementRef, ViewChild, OnDestroy} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ElementRef, ViewChild, OnDestroy, Input, Inject } from '@angular/core';
 import {fromEvent, Observable, Subscription} from 'rxjs';
 import {map, tap, filter, debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {ActivatedRoute, Router, Params} from '@angular/router';
 import {Word, CategoriesService} from '../services/categories.service';
 import {SpeachService} from '../services/speach.service';
+import { DOCUMENT } from '@angular/common';
+
+const trimWord = (text: string): string => {
+  let word: string = text.toLowerCase();
+  word = word.replace(/(\?|¿|¡|!|,|\.)/g, '');
+
+  word = word.replace(/á/g, 'a');
+  word = word.replace(/à/g, 'a');
+  word = word.replace(/é/g, 'e');
+  word = word.replace(/í/g, 'i');
+  word = word.replace(/ò/g, 'o');
+  word = word.replace(/ó/g, 'o');
+  word = word.replace(/ñ/g, 'n');
+  return word;
+};
 
 export interface Word {
   word: string;
@@ -39,7 +54,10 @@ export class WordComponent implements OnInit, OnDestroy {
   public isRecording: boolean;
   private recSubscibation: Subscription;
   private recActiveSubscibation: Subscription;
+  public uiTransform: string[] = [];
+  public letters: string[] = [];
 
+  @Input() lang: string;
   @ViewChild('input', {static: false}) input: ElementRef;
 
   // tmp
@@ -51,7 +69,8 @@ export class WordComponent implements OnInit, OnDestroy {
     public speechService: SpeachService,
     private route: ActivatedRoute,
     private router: Router,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    @Inject(DOCUMENT) private document: Document
   ) {
   }
 
@@ -73,69 +92,76 @@ export class WordComponent implements OnInit, OnDestroy {
         this.nextWord(true);
       });
 
-    this.recActiveSubscibation = this.speechService.recActive
-      .subscribe(active => {
-        this.isRecording = active;
-        this.cdRef.detectChanges();
-    });
+    this.recSubscribe();
 
-    this.recSubscibation = this.speechService.rec
-      .pipe(
-        distinctUntilChanged()
-      )
-      .subscribe((variants: string[]) => {
-        if (variants.length && variants[0] === 'stop') {
-          this.showWord();
-          this.speakWord();
-          setTimeout(() => {
-            if (!this.isRecording) {
-              this.speechService.startRec();
-            }
-          }, 2000);
-          return;
-        }
-        if (variants.length && variants[0] === 'next') {
-          this.nextWord();
-          setTimeout(() => {
-            if (!this.isRecording) {
-              this.speechService.startRec();
-            }
-          }, 500);
-          return;
-        }
-        if (variants.includes(this.currentWord.word)) {
-          this.currentValue = this.currentWord.word;
-          this.checkWord();
-          this.checkFinal();
-          this.showWord();
-          this.speakWord();
-          setTimeout(() => {
-            this.nextWord(true);
-            if (!this.isRecording) {
-              this.speechService.startRec();
-            }
-          }, 1000);
-        } else {
-          this.currentValue = variants.length ? variants[0] : '';
-          this.checkWord();
-          setTimeout(() => {
-            if (this.isError && !this.isRecording) {
-              this.speechService.startRec();
-            }
-          }, 500);
-        }
-      });
   }
 
   ngOnDestroy(): void {
-    this.recSubscibation.unsubscribe();
-    this.recActiveSubscibation.unsubscribe();
+    this.recSubscibation && this.recSubscibation.unsubscribe();
+    this.recActiveSubscibation && this.recActiveSubscibation.unsubscribe();
+  }
+
+
+  private recSubscribe() {
+    // this.recActiveSubscibation = this.speechService.recActive
+    //   .subscribe(active => {
+    //     this.isRecording = active;
+    //     this.cdRef.detectChanges();
+    // });
+    //
+    // this.recSubscibation = this.speechService.rec
+    //   .pipe(
+    //     distinctUntilChanged()
+    //   )
+    //   .subscribe((variants: string[]) => {
+    //     if (variants.length && variants[0] === 'stop') {
+    //       this.showWord();
+    //       this.speakWord();
+    //       setTimeout(() => {
+    //         if (!this.isRecording) {
+    //           this.speechService.startRec();
+    //         }
+    //       }, 2000);
+    //       return;
+    //     }
+    //     if (variants.length && variants[0] === 'next') {
+    //       this.nextWord();
+    //       setTimeout(() => {
+    //         if (!this.isRecording) {
+    //           this.speechService.startRec();
+    //         }
+    //       }, 500);
+    //       return;
+    //     }
+    //     if (variants.includes(this.currentWord.word)) {
+    //       this.currentValue = this.currentWord.word;
+    //       this.checkWord();
+    //       this.checkFinal();
+    //       this.showWord();
+    //       this.speakWord();
+    //       setTimeout(() => {
+    //         this.nextWord(true);
+    //         if (!this.isRecording) {
+    //           this.speechService.startRec();
+    //         }
+    //       }, 1000);
+    //     } else {
+    //       this.currentValue = variants.length ? variants[0] : '';
+    //       this.checkWord();
+    //       setTimeout(() => {
+    //         if (this.isError && !this.isRecording) {
+    //           this.speechService.startRec();
+    //         }
+    //       }, 500);
+    //     }
+    //   });
   }
 
   private fetchWords() {
     this.loading = true;
     this.categoriesService.fetchCategory(this.categoryId)
       .subscribe(category => {
+        this.document.documentElement.lang = category.lang || 'en-US';
         this.total = category.length;
         this.words = category.words;
         this.loading = false;
@@ -158,7 +184,7 @@ export class WordComponent implements OnInit, OnDestroy {
       .subscribe((e: KeyboardEvent) => {
         if (e.key === 'Enter') {
           if (this.show) {
-            this.nextWord();
+            this.nextWord(this.isFinal);
             return;
           }
           this.showWord();
@@ -174,7 +200,7 @@ export class WordComponent implements OnInit, OnDestroy {
     this.show = true;
   }
 
-  private speakWord() {
+  public speakWord() {
     this.speechService.speak(this.currentWord.word);
   }
 
@@ -198,6 +224,13 @@ export class WordComponent implements OnInit, OnDestroy {
       this.hint = 'to ***';
     }
     this.progress = 100 * (1 - this.words.length / this.total);
+
+    this.letters = trimWord(this.currentWord.word).split('');
+    this.uiTransform = this.letters.map(r => {
+      const x = Math.random() * window.outerWidth;
+      const y = Math.random() * 300;
+      return `translate3d(${x}px, ${y}px, 0)`;
+    });
   }
 
   private shuffle(): void {
@@ -221,7 +254,8 @@ export class WordComponent implements OnInit, OnDestroy {
   }
 
   private checkTypingError() {
-    const val = this.currentValue.toLowerCase();
+    const val: string = this.currentValue.toLowerCase();
+    const word: string = trimWord(this.currentWord.word);
     if (this.reverse) {
       for (const tr of this.currentWord.translations) {
         if (tr.toLowerCase().indexOf(val) === 0) {
@@ -230,7 +264,7 @@ export class WordComponent implements OnInit, OnDestroy {
       }
       return true;
     } else {
-      return this.currentWord.word.toLowerCase().indexOf(val) !== 0;
+      return word.indexOf(val) !== 0;
     }
   }
 
@@ -238,13 +272,13 @@ export class WordComponent implements OnInit, OnDestroy {
     const val = this.currentValue.toLowerCase();
     if (this.reverse) {
       for (const tr of this.currentWord.translations) {
-        if (val === tr.toLowerCase()) {
+        if (val === trimWord(tr)) {
           return true;
         }
       }
       return false;
     } else {
-      return val === this.currentWord.word.toLowerCase();
+      return val === trimWord(this.currentWord.word);
     }
   }
 
@@ -253,4 +287,9 @@ export class WordComponent implements OnInit, OnDestroy {
     this.isFinal = this.checkFinal();
   }
 
+  public isTyped(index: number) {
+    const char = this.letters.join('').charAt(index).toLowerCase();
+    const typedChar = this.currentValue.charAt(index).toLowerCase();
+    return char === typedChar;
+  }
 }

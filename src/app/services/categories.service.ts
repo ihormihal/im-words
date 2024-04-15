@@ -10,7 +10,8 @@ export interface Word {
 }
 
 export interface Category {
-	id: string
+	id: string,
+  lang?: string,
 	title: string,
 	length: number,
 	words?: Word[]
